@@ -103,7 +103,7 @@ with st.sidebar:
 
     footer_part2 = """
         <p style='margin: 6px 0; font-size: 16px;'>
-            📧 <a href='mailto:samadrao@gmail.com' 
+            📧 <a href='mailto:samadrao318@gmail.com' 
                 style='text-decoration: none; color: #1E88E5;'>
                 samadrao@gmail.com
             </a>
