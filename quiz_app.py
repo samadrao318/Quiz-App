@@ -83,7 +83,60 @@ if "results_df" not in st.session_state:
 st.title("Quiz App Programming")
 st.caption("This is a teaching quiz app.")
 st.write("Welcome to the Quiz app")
+with st.sidebar:
+    st.header("Clear Data 🧹")
+    if st.button("Restart 🔁"):
+        st.session_state.clear()
+        st.rerun()
+        
+     # Footer: attribution
+    st.markdown("<hr>", unsafe_allow_html=True)
 
+    footer_part1 = """
+    <div style='text-align:left; line-height: 1.6;'>
+        <p style='font-size: 20px; font-weight: bold; margin: 0;'>
+            Developed by <span style='color:#4CAF50;'>Rao Samad</span>
+        </p>
+    """
+
+    st.markdown(footer_part1, unsafe_allow_html=True)
+
+    footer_part2 = """
+        <p style='margin: 6px 0; font-size: 16px;'>
+            📧 <a href='mailto:samadrao@gmail.com' 
+                style='text-decoration: none; color: #1E88E5;'>
+                samadrao@gmail.com
+            </a>
+        </p>
+
+        <p style='margin: 6px 0; font-size: 16px;'>
+            📞 <a href='tel:+923000000000' 
+                style='text-decoration: none; color: #1E88E5;'>
+                +92 3046503593
+            </a>
+        </p>
+    """
+
+    st.markdown(footer_part2, unsafe_allow_html=True)
+
+    footer_part3 = """
+        <p style='font-size: 13px; color: black; margin-top: 8px;'>
+            © 2025 All Rights Reserved
+        </p>
+    </div>
+    """
+
+    st.markdown(footer_part3, unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+        
+# ------------------------------------
+# Prevent IndexError after restart
+# ------------------------------------
+if "quiz" not in st.session_state or len(st.session_state.quiz) == 0:
+    st.session_state.quiz = shuffle_quiz(quiz_data.copy())
+    st.session_state.q_index = 0
+    st.session_state.answer = []
+    st.session_state.finish = False
 # -----------------------------------
 # If finish -> show result
 # -----------------------------------
@@ -94,21 +147,7 @@ if st.session_state.finish:
     df, score = save_result_df(st.session_state.answer)
     st.success(f"Your Score : {score} / {len(st.session_state.answer)}")
     st.write(df[["question", "selected", "correct", "is_correct"]])
-
-    if st.button("Restart 🔁"):
-        st.session_state.clear()
-        st.rerun()
-        st.stop()
-        
-# ------------------------------------
-# Prevent IndexError after restart
-# ------------------------------------
-if "quiz" not in st.session_state or len(st.session_state.quiz) == 0:
-    st.session_state.quiz = shuffle_quiz(quiz_data.copy())
-    st.session_state.q_index = 0
-    st.session_state.answer = []
-    st.session_state.finish = False
-
+    st.stop()
 
 # show question
 q_index = st.session_state.q_index
@@ -174,4 +213,6 @@ with col2:
         if st.session_state.q_index >= len(st.session_state.quiz):
             st.session_state.finish = True
         st.rerun()
+        
+
     
