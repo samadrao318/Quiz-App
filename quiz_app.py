@@ -105,12 +105,12 @@ with st.sidebar:
         <p style='margin: 6px 0; font-size: 16px;'>
             📧 <a href='mailto:samadrao318@gmail.com' 
                 style='text-decoration: none; color: #1E88E5;'>
-                samadrao@gmail.com
+                samadrao318@gmail.com
             </a>
         </p>
 
         <p style='margin: 6px 0; font-size: 16px;'>
-            📞 <a href='tel:+923000000000' 
+            📞 <a href='tel:+923046503593' 
                 style='text-decoration: none; color: #1E88E5;'>
                 +92 3046503593
             </a>
