@@ -4,6 +4,7 @@ import time
 import random
 import pandas as pd
 import plotly.express as px
+
 #from quiz_data import quiz_data
 
 st.set_page_config(page_title="Quiz App", layout="centered")
@@ -70,6 +71,11 @@ if "finish" not in st.session_state:
     st.session_state.finish = False
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
+    
+if "results_df" not in st.session_state:
+    st.session_state.results_df = pd.DataFrame(
+        columns=["question", "selected", "correct", "is_correct"]
+    )
 
 # -------------------------
 # Main UI for User
@@ -78,46 +84,31 @@ st.title("Quiz App Programming")
 st.caption("This is a teaching quiz app.")
 st.write("Welcome to the Quiz app")
 
-# If finished, show results
+# -----------------------------------
+# If finish -> show result
+# -----------------------------------
 if st.session_state.finish:
     st.header("Quiz Result")
     st.balloons()
+
     df, score = save_result_df(st.session_state.answer)
     st.success(f"Your Score : {score} / {len(st.session_state.answer)}")
     st.write(df[["question", "selected", "correct", "is_correct"]])
-    
 
-    # Count correct vs wrong
-    count_df = df["is_correct"].value_counts().reset_index()
-    count_df.columns = ["Result", "Count"]
-
-    # Bar chart
-    fig = px.bar(
-        count_df,
-        x="Result",
-        y="Count",
-        color="Result",
-        title="Quiz Result Summary",
-        text="Count",
-    )
-
-    fig.update_layout(
-        xaxis_title="Result Type",
-        yaxis_title="Number of Questions",
-        showlegend=False
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    
-    if st.button("Restart 🔁",type="primary"):
-        st.session_state.quiz = shuffle_quiz(quiz_data.copy())
-        st.session_state.q_index = 0
-        st.session_state.answer = []
-        st.session_state.finish = True
-        st.session_state.start_time = time.time()
+    if st.button("Restart 🔁"):
+        st.session_state.clear()
         st.rerun()
         st.stop()
+        
+# ------------------------------------
+# Prevent IndexError after restart
+# ------------------------------------
+if "quiz" not in st.session_state or len(st.session_state.quiz) == 0:
+    st.session_state.quiz = shuffle_quiz(quiz_data.copy())
+    st.session_state.q_index = 0
+    st.session_state.answer = []
+    st.session_state.finish = False
+
 
 # show question
 q_index = st.session_state.q_index
@@ -183,3 +174,4 @@ with col2:
         if st.session_state.q_index >= len(st.session_state.quiz):
             st.session_state.finish = True
         st.rerun()
+    
