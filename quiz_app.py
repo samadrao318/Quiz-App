@@ -3,6 +3,7 @@ import streamlit as st
 import time
 import random
 import pandas as pd
+import plotly.express as px
 #from quiz_data import quiz_data
 
 st.set_page_config(page_title="Quiz App", layout="centered")
@@ -84,14 +85,39 @@ if st.session_state.finish:
     df, score = save_result_df(st.session_state.answer)
     st.success(f"Your Score : {score} / {len(st.session_state.answer)}")
     st.write(df[["question", "selected", "correct", "is_correct"]])
-    if st.button("Restart 🔁"):
+    
+
+    # Count correct vs wrong
+    count_df = df["is_correct"].value_counts().reset_index()
+    count_df.columns = ["Result", "Count"]
+
+    # Bar chart
+    fig = px.bar(
+        count_df,
+        x="Result",
+        y="Count",
+        color="Result",
+        title="Quiz Result Summary",
+        text="Count",
+    )
+
+    fig.update_layout(
+        xaxis_title="Result Type",
+        yaxis_title="Number of Questions",
+        showlegend=False
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    
+    if st.button("Restart 🔁",type="primary"):
         st.session_state.quiz = shuffle_quiz(quiz_data.copy())
         st.session_state.q_index = 0
         st.session_state.answer = []
-        st.session_state.finish = False
+        st.session_state.finish = True
         st.session_state.start_time = time.time()
         st.rerun()
-    st.stop()
+        st.stop()
 
 # show question
 q_index = st.session_state.q_index
@@ -106,7 +132,7 @@ option = st.radio("Choose one option:", q["options"], key=f"q{q_index}")
 # layout: left=Next button, right=timer
 col1, col2 = st.columns([1, 1])
 with col1:
-    if st.button("Next ➡️", key=f"next_{q_index}"):
+    if st.button("Next ➡️", type="primary",key=f"next_{q_index}"):
         # avoid duplicate append: only append if not already answered for this q_index
         # condition: number of saved answers should equal current question index
         if len(st.session_state.answer) == q_index:
